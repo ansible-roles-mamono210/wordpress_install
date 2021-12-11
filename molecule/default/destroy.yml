@@ -1,0 +1,21 @@
+---
+- name: Destroy
+  hosts: localhost
+  connection: local
+
+  tasks:
+    - name: Remove WordPress container
+      community.docker.docker_container:
+        name: molecule_wordpress
+        state: absent
+
+    - name: Remove MySQL container
+      community.docker.docker_container:
+        name: db
+        state: absent
+
+    - name: Delete a network
+      community.docker.docker_network:
+        name: molecule_wordpress
+        state: absent
+        force: yes

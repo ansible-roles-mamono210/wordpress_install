@@ -1,0 +1,30 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: delegated
+platforms:
+  - name: wordpress
+    image: ${MOLECULE_IMAGE}
+    networks: molecule_wordpress
+  - name: db
+    image: mysql:5.7
+    networks: molecule_wordpress
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      callbacks_enabled: ansible.posix.profile_tasks
+verifier:
+  name: ansible
+scenario:
+  converge_sequence:
+    - converge
+  destroy_sequence:
+    - destroy
+  test_sequence:
+    - dependency
+    - syntax
+    - create
+    - converge
+    - verify

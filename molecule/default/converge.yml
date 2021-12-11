@@ -1,0 +1,13 @@
+---
+- name: Converge
+  hosts: wordpress
+  connection: docker
+  become: true
+  vars:
+    ansible_user: ansible
+  roles:
+    - role: geerlingguy.repo-epel
+    - role: geerlingguy.repo-remi
+    - role: mamono210.php
+    - role: mamono210.wp_cli
+    - role: wordpress_install
