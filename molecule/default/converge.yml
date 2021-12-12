@@ -10,4 +10,5 @@
     - role: geerlingguy.repo-remi
     - role: mamono210.php
     - role: mamono210.wp_cli
+    - role: mamono210.mysql_client
     - role: wordpress_install

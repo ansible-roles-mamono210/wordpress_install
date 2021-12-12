@@ -8,3 +8,5 @@ roles:
     src: https://github.com/ansible-roles-mamono210/php.git
   - name: mamono210.wp_cli
     src: https://github.com/ansible-roles-mamono210/wp_cli.git
+  - name: mamono210.mysql_client
+    src: https://github.com/ansible-roles-mamono210/mysql_client.git

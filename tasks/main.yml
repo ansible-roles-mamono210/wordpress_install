@@ -1,14 +1,4 @@
 ---
-- name: Install https://dev.mysql.com/get/mysql80-community-release-el7-1.noarch.rpm
-  ansible.builtin.yum:
-    name: https://dev.mysql.com/get/mysql80-community-release-el7-1.noarch.rpm
-    state: present
-
-- name: Install mysql-community-client for WP-CLI
-  ansible.builtin.package:
-    name: mysql-community-client
-    state: present
-
 - name: Create WordPress install directory
   ansible.builtin.file:
     dest: '{{ wp_install_path }}'
