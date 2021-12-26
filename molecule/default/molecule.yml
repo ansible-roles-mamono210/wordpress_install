@@ -10,11 +10,16 @@ platforms:
   - name: db
     image: mysql:5.7
     networks: molecule_wordpress
+  - name: selenium
+    image: selenium/standalone-firefox:latest
+    networks: molecule_wordpress
 provisioner:
   name: ansible
   config_options:
     defaults:
       callbacks_enabled: ansible.posix.profile_tasks
+  connection_options:
+    wp_host: 'wordpress'
 verifier:
   name: ansible
 scenario:

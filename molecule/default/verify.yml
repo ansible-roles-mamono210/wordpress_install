@@ -1,27 +1,27 @@
 ---
 - name: Verify
-  become: true
-  connection: docker
   gather_facts: false
-  hosts: wordpress
-  vars:
-    ansible_user: ansible
+  hosts: localhost
 
   tasks:
-    - name: Check if WordPress is running
-      ansible.builtin.uri:
-        url: http://localhost/wordpress
-        return_content: yes
-      register: wordpress_installed
-
-    - name: Show contents
-      ansible.builtin.debug:
-        msg: "{{ wordpress_installed.content.split('\n') }}"
+    - name: Execute selenium
+      ansible.builtin.command:
+        cmd: python screenshot.py
+      args:
+        chdir: files
+      changed_when: false
+      delegate_to: localhost
 
     - name: Check OS version
-      ansible.builtin.command: cat /etc/redhat-release
-      register: os_version
+      ansible.builtin.command:
+        cmd: cat /etc/redhat-release
+      become: yes
       changed_when: false
+      delegate_to: wordpress
+      connection: docker
+      register: os_version
+      vars:
+        ansible_user: ansible
 
     - name: Show OS version
       ansible.builtin.debug:

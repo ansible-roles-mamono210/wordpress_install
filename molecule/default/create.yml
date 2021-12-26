@@ -18,7 +18,6 @@
         image: "{{ molecule_platforms.1.image }}"
         networks:
           - name: "{{ molecule_platforms.1.networks }}"
-        restart: yes
         state: started
         env:
           MYSQL_ROOT_PASSWORD: somewordpress
@@ -37,6 +36,15 @@
         privileged: yes
         ports:
           - "80:80"
-        restart: yes
         state: started
         tty: yes
+
+    - name: Setup Selenium container
+      community.docker.docker_container:
+        name: "{{ molecule_platforms.2.name }}"
+        image: "{{ molecule_platforms.2.image }}"
+        networks:
+          - name: "{{ molecule_platforms.2.networks }}"
+        ports:
+          - "4444:4444"
+        state: started
