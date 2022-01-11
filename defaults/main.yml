@@ -2,26 +2,41 @@
 # Working directory
 wp_install_work_dir: /tmp/wp-install
 
+# PHP Packages
+php_packages:
+  - php
+  - php-gd
+  - php-gmp
+  - php-intl
+  - php-ldap
+  - php-mbstring
+  - php-mcrypt
+  - php-mysqlnd
+  - php-opcache
+  - php-pdo
+  - php-pear
+  - php-pear-Net-Curl
+  - php-pecl-apcu-bc
+  - php-pecl-redis
+  - php-pecl-zip
+  - php-soap
+  - php-xml
+
 # WordPress installation settings parameters
-# ----------------------------------------------------
 wp_install_dir: wordpress
 wp_install_path: "/var/www/html/{{ wp_install_dir }}"
 wp_host: localhost
 wp_url: "http://{{ wp_host }}/{{ wp_install_dir }}"
-# ----------------------------------------------------
 
 # WordPress database parameters
-# ----------------------------------------------------
 db_name: wordpress
 db_user: wordpress
 db_password: wordpress
 db_host: db:3306
 db_port: 3306
 db_prefix: wp_
-# ----------------------------------------------------
 
 # WordPress site parameters
-# ----------------------------------------------------
 wp_title: test
 wp_admin_user: test
 wp_admin_password: test
@@ -29,4 +44,3 @@ wp_admin_email: mail@example.com
 
 # .htaccess file name
 httpd_conf_confd: wordpress.conf
-# ----------------------------------------------------
