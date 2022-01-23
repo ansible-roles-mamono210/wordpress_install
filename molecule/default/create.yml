@@ -10,7 +10,7 @@
 
     - name: Create a network
       community.docker.docker_network:
-        name: "{{ molecule_platforms.0.networks }}"
+        name: "{{ molecule_platforms.0.networks[0].name }}"
 
     - name: Setup MySQL container
       community.docker.docker_container:
@@ -28,16 +28,16 @@
     - name: Setup WordPress container
       community.docker.docker_container:
         name: "{{ molecule_platforms.0.name }}"
-        command: /sbin/init
-        detach: yes
+        command: "{{ molecule_platforms.0.command }}"
+        detach: "{{ molecule_platforms.0.detach }}"
         image: "{{ molecule_platforms.0.image }}"
         networks:
-          - name: "{{ molecule_platforms.0.networks }}"
-        privileged: yes
+          - name: "{{ molecule_platforms.0.networks[0].name }}"
+        privileged: "{{ molecule_platforms.0.privileged }}"
         ports:
-          - "80:80"
-        state: started
-        tty: yes
+          - "{{ molecule_platforms.0.ports[0] }}"
+        state: "{{ molecule_platforms.0.state }}"
+        tty: "{{ molecule_platforms.0.tty }}"
 
     - name: Setup Selenium container
       community.docker.docker_container:

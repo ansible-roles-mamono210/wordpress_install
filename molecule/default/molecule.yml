@@ -6,7 +6,15 @@ driver:
 platforms:
   - name: wordpress
     image: ${MOLECULE_IMAGE}
-    networks: molecule_wordpress
+    command: /sbin/init
+    detach: yes
+    networks:
+      - name: molecule_wordpress
+    privileged: yes
+    ports:
+      - "80:80"
+    state: started
+    tty: yes
   - name: db
     image: mysql:5.7
     networks: molecule_wordpress
