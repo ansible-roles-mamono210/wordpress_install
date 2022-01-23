@@ -44,7 +44,7 @@
         name: "{{ molecule_platforms.2.name }}"
         image: "{{ molecule_platforms.2.image }}"
         networks:
-          - name: "{{ molecule_platforms.2.networks }}"
+          - name: "{{ molecule_platforms.2.networks[0].name }}"
         ports:
-          - "4444:4444"
-        state: started
+          - "{{ molecule_platforms.2.ports[0] }}"
+        state: "{{ molecule_platforms.2.state }}"
