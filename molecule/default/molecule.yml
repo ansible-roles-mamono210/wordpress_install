@@ -17,7 +17,9 @@ platforms:
     tty: yes
   - name: db
     image: mysql:5.7
-    networks: molecule_wordpress
+    networks:
+      - name: molecule_wordpress
+    state: started
     env:
       MYSQL_ROOT_PASSWORD: somewordpress
       MYSQL_DATABASE: wordpress

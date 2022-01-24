@@ -17,8 +17,8 @@
         name: "{{ molecule_platforms.1.name }}"
         image: "{{ molecule_platforms.1.image }}"
         networks:
-          - name: "{{ molecule_platforms.1.networks }}"
-        state: started
+          - name: "{{ molecule_platforms.1.networks[0].name }}"
+        state: "{{ molecule_platforms.1.state }}"
         env:
           MYSQL_ROOT_PASSWORD: "{{ molecule_platforms.1.env.MYSQL_ROOT_PASSWORD }}"
           MYSQL_DATABASE: "{{ molecule_platforms.1.env.MYSQL_DATABASE }}"
