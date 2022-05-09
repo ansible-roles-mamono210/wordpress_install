@@ -6,13 +6,17 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Install galaxy roles
+          name: Install the role
           command: |
-            if [ -f 'roles/requirements.yml' ]; then
-              ansible-galaxy install -r roles/requirements.yml
-            else
-              ansible-galaxy install git+${CIRCLE_REPOSITORY_URL},${CIRCLE_SHA1}
-            fi
+            ansible-galaxy install git+${CIRCLE_REPOSITORY_URL},${CIRCLE_SHA1}
+      - run:
+          name: Install dependent roles
+          command: |
+            for d in `find molecule/* -maxdepth 1`; do
+              if [[ $d =~ molecule/.*/requirements.yml ]]; then
+                ansible-galaxy install -r $d
+              fi
+            done
       - run:
           name: Execulte Ansible-lint
           command: ansible-lint
@@ -77,3 +81,5 @@ workflows:
                 - 'wordpress_install'
               molecule-image:
                 - 'ghcr.io/docker-hub-tm/ansible-test/centos7:latest'
+          requires:
+            - ansible-lint
