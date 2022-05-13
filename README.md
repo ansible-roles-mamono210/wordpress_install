@@ -1,5 +1,4 @@
 [![CircleCI](https://circleci.com/gh/ansible-roles-mamono210/wordpress_install/tree/main.svg?style=svg)](https://circleci.com/gh/ansible-roles-mamono210/wordpress_install/tree/main)
-[![](https://github.com/ansible-roles-mamono210/wordpress_install/workflows/build/badge.svg)](https://github.com/ansible-roles-mamono210/wordpress_install/actions?query=workflow%3Abuild)
 
 Role Description
 =========
