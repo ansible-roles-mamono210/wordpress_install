@@ -57,6 +57,7 @@ provisioner:
       - php-pecl-zip
       - php-soap
       - php-xml
+    remi_repo: remi-php74
 verifier:
   name: ansible
 scenario:
