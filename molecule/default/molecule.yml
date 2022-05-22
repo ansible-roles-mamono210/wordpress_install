@@ -49,15 +49,12 @@ provisioner:
       - php-mcrypt
       - php-mysqlnd
       - php-opcache
-      - php-pdo
       - php-pear
       - php-pear-Net-Curl
-      - php-pecl-apcu-bc
       - php-pecl-redis
       - php-pecl-zip
       - php-soap
-      - php-xml
-    remi_repo: remi-php74
+    remi_repo: remi-php81
 verifier:
   name: ansible
 scenario:
@@ -70,5 +67,6 @@ scenario:
     - syntax
     - create
     - converge
+    - side_effect
     - verify
     - destroy

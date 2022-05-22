@@ -1,27 +1,36 @@
 ---
 - name: Verify
   gather_facts: false
-  hosts: localhost
+  hosts: wordpress
+  connection: docker
+  become: true
+  vars:
+    ansible_user: ansible
 
   tasks:
-    - name: Execute selenium
-      ansible.builtin.command:
-        cmd: python screenshot.py
-      args:
-        chdir: files
+    - name: Check whether PHP installed
+      ansible.builtin.command: php -v
+      register: php_installed
       changed_when: false
-      delegate_to: localhost
+
+    - name: Check whether WP-CLI installed
+      ansible.builtin.command: |
+        sudo -u apache /usr/local/bin/wp cli version
+      register: wpcli_installed
+      changed_when: false
 
     - name: Check OS version
-      ansible.builtin.command:
-        cmd: cat /etc/redhat-release
-      become: yes
-      changed_when: false
-      delegate_to: wordpress
-      connection: docker
+      ansible.builtin.command: cat /etc/redhat-release
       register: os_version
-      vars:
-        ansible_user: ansible
+      changed_when: false
+
+    - name: Make sure PHP is installed
+      ansible.builtin.debug:
+        var: php_installed
+
+    - name: Make sure WP-CLI is installed
+      ansible.builtin.debug:
+        var: wpcli_installed
 
     - name: Show OS version
       ansible.builtin.debug:
