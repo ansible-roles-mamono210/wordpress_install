@@ -1,0 +1,50 @@
+---
+- name: Create
+  hosts: localhost
+  connection: local
+
+  tasks:
+    - name: set_fact molecule_platforms
+      ansible.builtin.set_fact:
+        molecule_platforms: "{{ molecule_yml.platforms }}"
+
+    - name: Create a network
+      community.docker.docker_network:
+        name: "{{ molecule_platforms.0.networks[0].name }}"
+
+    - name: Setup MySQL container
+      community.docker.docker_container:
+        name: "{{ molecule_platforms.1.name }}"
+        image: "{{ molecule_platforms.1.image }}"
+        networks:
+          - name: "{{ molecule_platforms.1.networks[0].name }}"
+        state: "{{ molecule_platforms.1.state }}"
+        env:
+          MYSQL_ROOT_PASSWORD: "{{ molecule_platforms.1.env.MYSQL_ROOT_PASSWORD }}"
+          MYSQL_DATABASE: "{{ molecule_platforms.1.env.MYSQL_DATABASE }}"
+          MYSQL_USER: "{{ molecule_platforms.1.env.MYSQL_USER }}"
+          MYSQL_PASSWORD: "{{ molecule_platforms.1.env.MYSQL_PASSWORD }}"
+
+    - name: Setup WordPress container
+      community.docker.docker_container:
+        name: "{{ molecule_platforms.0.name }}"
+        command: "{{ molecule_platforms.0.command }}"
+        detach: "{{ molecule_platforms.0.detach }}"
+        image: "{{ molecule_platforms.0.image }}"
+        networks:
+          - name: "{{ molecule_platforms.0.networks[0].name }}"
+        privileged: "{{ molecule_platforms.0.privileged }}"
+        ports:
+          - "{{ molecule_platforms.0.ports[0] }}"
+        state: "{{ molecule_platforms.0.state }}"
+        tty: "{{ molecule_platforms.0.tty }}"
+
+    - name: Setup Selenium container
+      community.docker.docker_container:
+        name: "{{ molecule_platforms.2.name }}"
+        image: "{{ molecule_platforms.2.image }}"
+        networks:
+          - name: "{{ molecule_platforms.2.networks[0].name }}"
+        ports:
+          - "{{ molecule_platforms.2.ports[0] }}"
+        state: "{{ molecule_platforms.2.state }}"

@@ -35,7 +35,7 @@ jobs:
     parameters:
       checkout-path:
         type: string
-      molecule-image:
+      molecule-test-image:
         type: string
     steps:
       - checkout:
@@ -49,14 +49,14 @@ jobs:
           name: Test with Molecule
           command: |
             cd << parameters.checkout-path >>
-            molecule test
+            molecule test --scenario-name << parameters.molecule-test-image >>
           environment:
             PY_COLORS: '1'
             ANSIBLE_FORCE_COLOR: '1'
-            MOLECULE_IMAGE: << parameters.molecule-image >>
+            MOLECULE_IMAGE: "ghcr.io/docker-hub-tm/ansible-test/<< parameters.molecule-test-image >>:latest"
       - store_artifacts:
-          path: << parameters.checkout-path >>/molecule/default/files/screenshot.png
-          destination: screenshot.png
+          path: << parameters.checkout-path >>/molecule/<< parameters.molecule-test-image >>/files/screenshot.png
+          destination: screenshot.<< parameters.molecule-test-image >>.png
       - run:
           name: Show Ansible version
           command: |
@@ -110,7 +110,8 @@ workflows:
             parameters:
               checkout-path:
                 - 'wordpress_install'
-              molecule-image:
-                - 'ghcr.io/docker-hub-tm/ansible-test/centos7:latest'
+              molecule-test-image:
+                - 'centos7'
+                - 'centos-stream8'
           requires:
             - ansible-lint
