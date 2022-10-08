@@ -59,7 +59,7 @@
   args:
     chdir: '{{ wp_install_path }}'
 
-- name: Copy "{{ httpd_conf_confd }} to '/etc/httpd/conf.d/'"
+- name: Copy .htaccess file to '/etc/httpd/conf.d/'
   ansible.builtin.file:
     path: "/etc/httpd/conf.d/{{ httpd_conf_confd }}"
     state: touch
