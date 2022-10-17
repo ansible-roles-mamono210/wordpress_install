@@ -1,6 +1,6 @@
 wheel
 docker
 ansible
-molecule==4.0.1
+molecule
 molecule-docker
 selenium
