@@ -20,10 +20,10 @@
           - name: "{{ molecule_platforms.1.networks[0].name }}"
         state: "{{ molecule_platforms.1.state }}"
         env:
-          MYSQL_ROOT_PASSWORD: "{{ molecule_platforms.1.env[0].MYSQL_ROOT_PASSWORD }}"
-          MYSQL_DATABASE: "{{ molecule_platforms.1.env[1].MYSQL_DATABASE }}"
-          MYSQL_USER: "{{ molecule_platforms.1.env[2].MYSQL_USER }}"
-          MYSQL_PASSWORD: "{{ molecule_platforms.1.env[3].MYSQL_PASSWORD }}"
+          MYSQL_ROOT_PASSWORD: "{{ molecule_platforms.1.env.MYSQL_ROOT_PASSWORD }}"
+          MYSQL_DATABASE: "{{ molecule_platforms.1.env.MYSQL_DATABASE }}"
+          MYSQL_USER: "{{ molecule_platforms.1.env.MYSQL_USER }}"
+          MYSQL_PASSWORD: "{{ molecule_platforms.1.env.MYSQL_PASSWORD }}"
 
     - name: Setup WordPress container
       community.docker.docker_container:

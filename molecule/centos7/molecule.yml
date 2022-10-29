@@ -21,10 +21,10 @@ platforms:
       - name: molecule_wordpress
     state: started
     env:
-      - MYSQL_ROOT_PASSWORD: 'somewordpress'
-      - MYSQL_DATABASE: 'wordpress'
-      - MYSQL_USER: 'wordpress'
-      - MYSQL_PASSWORD: 'wordpress'
+      MYSQL_ROOT_PASSWORD: 'somewordpress'
+      MYSQL_DATABASE: 'wordpress'
+      MYSQL_USER: 'wordpress'
+      MYSQL_PASSWORD: 'wordpress'
   - name: selenium
     image: selenium/standalone-firefox:latest
     networks:
