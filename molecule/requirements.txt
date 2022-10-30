@@ -1,6 +1,4 @@
-wheel
-docker
 ansible
+docker
 molecule
-molecule-docker
 selenium
