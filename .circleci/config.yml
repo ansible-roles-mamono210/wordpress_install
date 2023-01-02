@@ -1,33 +1,16 @@
 ---
+version: 2.1
+
+orbs:
+  ansible-lint: orbss/ansible-lint@0.0.3
+
 jobs:
   ansible-lint:
-    docker:
-      - image: ghcr.io/docker-images-mamono210/circleci-executors/ansible-lint:latest
+    executor: ansible-lint/default
     steps:
       - checkout
-      - run:
-          name: Install the role
-          command: |
-            ansible-galaxy install git+${CIRCLE_REPOSITORY_URL},${CIRCLE_SHA1}
-      - run:
-          name: Install dependent roles
-          command: |
-            for d in `find molecule/* -maxdepth 1`; do
-              if [[ $d =~ molecule/.*/requirements.yml ]]; then
-                ansible-galaxy install -r $d
-              fi
-            done
-      - run:
-          name: Execulte Ansible-lint
-          command: ansible-lint
-      - run:
-          name: Show Ansible-lint version
-          command: |
-            pip list | grep ansible \
-            | GREP_COLORS='mt=01;34' egrep --color=always '[[:digit:]]' \
-            | GREP_COLORS='mt=01;34' egrep --color=always '\.' \
-            | GREP_COLORS='mt=01;33' egrep --color=always 'ansible.* '
-            ansible-lint --version
+      - ansible-lint/execute:
+          molecule-role-test: true
   molecule:
     machine:
       image: ubuntu-2004:202111-02
@@ -93,9 +76,8 @@ jobs:
             | GREP_COLORS='mt=01;34' egrep --color=always '\.' \
             | GREP_COLORS='mt=01;33' egrep --color=always 'yamllint.* '
 
-version: 2.1
 workflows:
-  version: 2
+  version: 2.1
   build:
     jobs:
       - trailing-whitespace
