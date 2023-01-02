@@ -13,13 +13,11 @@ platforms:
     privileged: yes
     ports:
       - "80:80"
-    state: started
     tty: yes
   - name: db
     image: mysql:5.7
     networks:
       - name: molecule_wordpress
-    state: started
     env:
       MYSQL_ROOT_PASSWORD: 'somewordpress'
       MYSQL_DATABASE: 'wordpress'
@@ -31,7 +29,6 @@ platforms:
       - name: molecule_wordpress
     ports:
       - "4444:4444"
-    state: started
 provisioner:
   name: ansible
   config_options:

@@ -18,7 +18,7 @@
         image: "{{ molecule_platforms.1.image }}"
         networks:
           - name: "{{ molecule_platforms.1.networks[0].name }}"
-        state: "{{ molecule_platforms.1.state }}"
+        state: started
         env:
           MYSQL_ROOT_PASSWORD: "{{ molecule_platforms.1.env.MYSQL_ROOT_PASSWORD }}"
           MYSQL_DATABASE: "{{ molecule_platforms.1.env.MYSQL_DATABASE }}"
@@ -36,7 +36,7 @@
         privileged: "{{ molecule_platforms.0.privileged }}"
         ports:
           - "{{ molecule_platforms.0.ports[0] }}"
-        state: "{{ molecule_platforms.0.state }}"
+        state: started
         tty: "{{ molecule_platforms.0.tty }}"
 
     - name: Setup Selenium container
@@ -47,4 +47,4 @@
           - name: "{{ molecule_platforms.2.networks[0].name }}"
         ports:
           - "{{ molecule_platforms.2.ports[0] }}"
-        state: "{{ molecule_platforms.2.state }}"
+        state: started
