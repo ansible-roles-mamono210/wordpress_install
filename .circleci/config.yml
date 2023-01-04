@@ -3,6 +3,7 @@ version: 2.1
 
 orbs:
   ansible-lint: orbss/ansible-lint@0.0.3
+  yamllint: orbss/yamllint@0.0.4
 
 jobs:
   ansible-lint:
@@ -60,21 +61,10 @@ jobs:
           name: Execute trailing-whitespace
           command: trailing-whitespace
   yamllint:
-    docker:
-      - image: ghcr.io/docker-images-mamono210/circleci-executors/yamllint:latest
-    resource_class: small
+    executor: yamllint/default
     steps:
       - checkout
-      - run:
-          name: Execute yamllint
-          command: yamllint *
-      - run:
-          name: Show yamllint version
-          command: |
-            yamllint --version \
-            | GREP_COLORS='mt=01;34' egrep --color=always '[[:digit:]]' \
-            | GREP_COLORS='mt=01;34' egrep --color=always '\.' \
-            | GREP_COLORS='mt=01;33' egrep --color=always 'yamllint.* '
+      - yamllint/execute
 
 workflows:
   version: 2.1
