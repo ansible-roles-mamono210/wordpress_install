@@ -3,6 +3,8 @@ version: 2.1
 
 orbs:
   ansible-lint: orbss/ansible-lint@0.0.3
+  aws-cli: circleci/aws-cli@3.1.1
+  molecule-ec2: orbss/molecule-ec2@0.0.4
   yamllint: orbss/yamllint@0.0.4
 
 jobs:
@@ -12,45 +14,22 @@ jobs:
       - checkout
       - ansible-lint/execute:
           molecule-role-test: true
-  molecule:
-    machine:
-      image: ubuntu-2004:202111-02
-    resource_class: medium
-    parameters:
-      checkout-path:
-        type: string
-      molecule-test-image:
-        type: string
+  molecule-ec2:
+    executor: molecule-ec2/default
+    working_directory: ~/wordpress_install
     steps:
-      - checkout:
-          path: << parameters.checkout-path >>
-      - run:
-          name: Install Molecule and dependencies
-          command: |
-            cd << parameters.checkout-path >>
-            pip3 install -r molecule/requirements.txt
-      - run:
-          name: Test with Molecule
-          command: |
-            cd << parameters.checkout-path >>
-            molecule test --scenario-name << parameters.molecule-test-image >>
-          environment:
-            PY_COLORS: '1'
-            ANSIBLE_FORCE_COLOR: '1'
-            MOLECULE_IMAGE: "ghcr.io/docker-images-mamono210/ansible-test/<< parameters.molecule-test-image >>:latest"
-      - store_artifacts:
-          path: << parameters.checkout-path >>/molecule/<< parameters.molecule-test-image >>/files/screenshot.png
-          destination: screenshot.<< parameters.molecule-test-image >>.png
-      - run:
-          name: Show Ansible version
-          command: |
-            pip3 list | grep ansible \
-            | GREP_COLORS='mt=01;34' egrep --color=always '[[:digit:]]' \
-            | GREP_COLORS='mt=01;34' egrep --color=always '\.' \
-            | GREP_COLORS='mt=01;33' egrep --color=always 'ansible.* '
-      - run:
-          name: Show Molecule version
-          command: molecule --version
+      - checkout
+      - aws-cli/setup:
+          profile-name: default
+          role-arn: ${AWS_ROLE_ARN}
+          role-session-name: molecule_wordpress_install
+          session-duration: '3600'
+      - molecule-ec2/execute:
+          aws-ami-name: "centos-stream8-1*"
+          aws-ami-owner-id: "808683561341"
+          aws-resource-name: "molecule_wordpress_install"
+          aws-vpc-subnet-id: "subnet-022a704b3061b8b39"
+          circleci-timeout: "15m"
   trailing-whitespace:
     docker:
       - image: ghcr.io/docker-images-mamono210/circleci-executors/trailing-whitespace:latest
@@ -77,13 +56,7 @@ workflows:
       - ansible-lint:
           requires:
             - yamllint
-      - molecule:
-          matrix:
-            parameters:
-              checkout-path:
-                - 'wordpress_install'
-              molecule-test-image:
-                - 'centos7'
-                - 'centos-stream8'
+      - molecule-ec2:
+          context: aws-oidc
           requires:
             - ansible-lint
