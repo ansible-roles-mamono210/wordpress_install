@@ -7,7 +7,7 @@ platforms:
   - name: ${PLATFORM_NAME}
     image_name: ${AMI_NAME}
     image_owner: ${AMI_OWNER_ID}
-    instance_type: "t2.medium"
+    instance_type: ${INSTANCE_TYPE}
     keypair_name: ${KEYPAIR_NAME}
     security_group_name: ${SECURITY_GROUP_NAME}
     security_group_rules:
@@ -21,7 +21,7 @@ platforms:
         to_port: 0
         cidr_ip: '0.0.0.0/0'
     ssh_port: 22
-    ssh_user: centos
+    ssh_user: ${ANSIBLE_USER}
     tag_name: ${TAG_NAME}
     tag_created_by: ${CREATED_BY}
     vpc_subnet_id: ${VPC_SUBNET_ID}
@@ -32,7 +32,7 @@ provisioner:
       callbacks_enabled: ansible.posix.profile_tasks
       verbosity: 0
   connection_options:
-    ansible_user: centos
+    ansible_user: ${ANSIBLE_USER}
     db_host: localhost
     db_name: "{{ mariadb_db_name }}"
     db_password: "{{ mariadb_db_password }}"
