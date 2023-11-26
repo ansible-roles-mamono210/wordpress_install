@@ -1,9 +1,9 @@
 ---
 - name: Converge
-  hosts: all
+  hosts: wordpress
+  connection: docker
   become: true
-
-  tasks:
-    - name: Execute
-      ansible.builtin.include_role:
-        name: wordpress_install
+  vars:
+    ansible_user: ansible
+  roles:
+    - role: wordpress_install
