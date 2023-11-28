@@ -2,29 +2,11 @@
 - name: Destroy
   hosts: localhost
   connection: local
+  gather_facts: false
 
   tasks:
-    - name: Set variables of molecule.yml to molecule_platforms
-      ansible.builtin.set_fact:
-        molecule_platforms: "{{ molecule_yml.platforms }}"
-
-    - name: Remove Selenium container
-      community.docker.docker_container:
-        name: "{{ molecule_platforms.2.name }}"
-        state: absent
-
-    - name: Remove WordPress container
-      community.docker.docker_container:
-        name: "{{ molecule_platforms.0.name }}"
-        state: absent
-
-    - name: Remove MySQL container
-      community.docker.docker_container:
-        name: "{{ molecule_platforms.1.name }}"
-        state: absent
-
-    - name: Delete a network
-      community.docker.docker_network:
-        name: "{{ molecule_platforms.0.networks }}"
-        state: absent
-        force: yes
+    - name: Execute
+      ansible.builtin.include_role:
+        name: mamono210.molecule_ec2_driver
+      vars:
+        molecule_ec2_driver_resource_state: 'absent'

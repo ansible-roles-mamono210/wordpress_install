@@ -2,68 +2,83 @@
 dependency:
   name: galaxy
 driver:
-  name: default
+  name: delegated
 platforms:
-  - name: wordpress
-    image: ${MOLECULE_IMAGE}
-    command: /sbin/init
-    detach: yes
-    networks:
-      - name: molecule_wordpress
-    privileged: yes
-    ports:
-      - "80:80"
-    tty: yes
-  - name: db
-    image: mysql:5.7
-    networks:
-      - name: molecule_wordpress
-    env:
-      MYSQL_ROOT_PASSWORD: 'somewordpress'
-      MYSQL_DATABASE: 'wordpress'
-      MYSQL_USER: 'wordpress'
-      MYSQL_PASSWORD: 'wordpress'
-  - name: selenium
-    image: selenium/standalone-firefox:latest
-    networks:
-      - name: molecule_wordpress
-    ports:
-      - "4444:4444"
+  - name: ${PLATFORM_NAME}
+    image_name: ${AMI_NAME}
+    image_owner: ${AMI_OWNER_ID}
+    instance_type: ${INSTANCE_TYPE}
+    keypair_name: ${KEYPAIR_NAME}
+    security_group_name: ${SECURITY_GROUP_NAME}
+    security_group_rules:
+      - proto: tcp
+        from_port: 22
+        to_port: 22
+        cidr_ip: '0.0.0.0/0'
+    security_group_rules_egress:
+      - proto: -1
+        from_port: 0
+        to_port: 0
+        cidr_ip: '0.0.0.0/0'
+    ssh_port: 22
+    ssh_user: ${ANSIBLE_USER}
+    tag_name: ${TAG_NAME}
+    tag_created_by: ${CREATED_BY}
+    vpc_subnet_id: ${VPC_SUBNET_ID}
 provisioner:
   name: ansible
   config_options:
     defaults:
       callbacks_enabled: ansible.posix.profile_tasks
+      verbosity: 0
   connection_options:
-    wp_host: 'wordpress'
+    ansible_user: ${ANSIBLE_USER}
+    db_host: localhost
+    db_name: "{{ mariadb_db_name }}"
+    db_password: "{{ mariadb_db_password }}"
+    db_port: 3306
+    db_prefix: wp_
+    db_user: "{{ mariadb_db_user }}"
+    httpd_conf_confd: wordpress.conf
+    mariadb_db_name: wordpress
+    mariadb_db_password: wordpress
+    mariadb_db_user: wordpress
+    mariadb_root_password: password
     php_packages:
       - php
       - php-gd
       - php-gmp
       - php-intl
       - php-ldap
-      - php-mbstring
       - php-mcrypt
       - php-mysqlnd
-      - php-opcache
       - php-pear
       - php-pecl-redis
       - php-pecl-zip
       - php-soap
     remi_repo: php:remi-8.1
+    wp_admin_email: mail@example.com
+    wp_admin_password: test
+    wp_admin_user: test
+    wp_install_work_dir: /tmp/wp-install
+    wp_install_dir: wordpress
+    wp_install_path: "/var/www/html/{{ wp_install_dir }}"
+    wp_host: localhost
+    wp_title: test
+    wp_url: "http://{{ wp_host }}/{{ wp_install_dir }}"
+  env:
+    MOLECULE_DEBUG: true
+  log: true
 verifier:
   name: ansible
 scenario:
-  converge_sequence:
-    - converge
-  destroy_sequence:
-    - destroy
   test_sequence:
     - dependency
+    - cleanup
+    - destroy
     - syntax
     - create
     - prepare
     - converge
-    - side_effect
-    - verify
+    - cleanup
     - destroy

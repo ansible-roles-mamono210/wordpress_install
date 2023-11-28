@@ -1,13 +1,13 @@
 ---
 - name: Prepare
-  hosts: wordpress
-  connection: docker
+  hosts: all
   become: true
-  vars:
-    ansible_user: ansible
+
   roles:
     - role: mamono210.epel
     - role: mamono210.remi
+    - role: mamono210.httpd_install
     - role: mamono210.php
     - role: mamono210.wp_cli
-    - role: mamono210.mysql_client
+    - role: mamono210.mariadb_install
+    - role: mamono210.mariadb_create_db
