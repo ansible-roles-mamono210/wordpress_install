@@ -82,7 +82,19 @@ workflows:
           aws-ami-name: 'centos-stream8-1*'
           aws-ami-owner-id: '808683561341'
           aws-instance-type: 't2.medium'
-          aws-resource-name: 'circleci_ansible-roles_wordpress_install_centos-stream8'
+          aws-resource-name: 'circleci_ansible-roles_wordpress_install_cs8'
+          aws-vpc-subnet-id: 'subnet-022a704b3061b8b39'
+          circleci-timeout: '15m'
+          molecule-scenario-name: 'default'
+          context: aws-oidc
+          requires:
+            - ansible-lint
+      - molecule-ec2:
+          ansible-user: 'ec2-user'
+          aws-ami-name: 'centos-stream9-1*'
+          aws-ami-owner-id: '808683561341'
+          aws-instance-type: 't2.medium'
+          aws-resource-name: 'circleci_ansible-roles_wordpress_install_cs9'
           aws-vpc-subnet-id: 'subnet-022a704b3061b8b39'
           circleci-timeout: '15m'
           molecule-scenario-name: 'default'
