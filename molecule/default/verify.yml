@@ -9,9 +9,11 @@
       register: php_installed
       changed_when: false
 
-    - name: Make sure PHP is installed
-      ansible.builtin.debug:
-        var: php_installed
+    - name: Check whether WP-CLI installed
+      ansible.builtin.command: |
+        sudo -u apache /usr/local/bin/wp cli version
+      register: wpcli_installed
+      changed_when: false
 
     - name: Check if WordPress is running
       ansible.builtin.uri:
@@ -19,14 +21,22 @@
         return_content: yes
       register: wordpress_installed
 
-    - name: Show contents
-      ansible.builtin.debug:
-        msg: "{{ wordpress_installed.content.split('\n') }}"
-
     - name: Check OS version
       ansible.builtin.command: cat /etc/redhat-release
       register: os_version
       changed_when: false
+
+    - name: Make sure PHP is installed
+      ansible.builtin.debug:
+        var: php_installed
+
+    - name: Make sure WP-CLI is installed
+      ansible.builtin.debug:
+        var: wpcli_installed
+
+    - name: Show contents
+      ansible.builtin.debug:
+        msg: "{{ wordpress_installed.content.split('\n') }}"
 
     - name: Show OS version
       ansible.builtin.debug:
