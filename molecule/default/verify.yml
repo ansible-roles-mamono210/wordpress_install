@@ -4,6 +4,58 @@
   hosts: all
 
   tasks:
+    - name: Gather facts
+      ansible.builtin.setup:
+      register: results
+      delegate_to: localhost
+
+    - name: Populate instance config
+      ansible.builtin.set_fact:
+        instance_conf: "{{ lookup('file', molecule_instance_config) | from_yaml }}"
+
+    - name: Set fact for Public IP
+      ansible.builtin.set_fact:
+        public_ip: "{{ item.address }}"
+      with_items: "{{ instance_conf }}"
+
+    - name: Write Public IP to a file
+      ansible.builtin.copy:
+        content: "{{ public_ip }}"
+        dest: /tmp/ip_address.txt
+        mode: preserve
+      delegate_to: localhost
+
+    - name: Set WordPress URL
+      ansible.builtin.command:
+        cmd:
+          "sudo -u apache /usr/local/bin/wp search-replace
+           {{ wp_url }}
+           http://{{ public_ip }}/{{ wp_install_dir }}
+           --all-tables
+           --allow-root"
+      register: wp_config
+      changed_when: wp_config.stdout | length > 0
+      args:
+        chdir: '{{ wp_install_path }}'
+
+    - name: Reload httpd
+      ansible.builtin.systemd_service:
+        name: httpd.service
+        state: reloaded
+
+    - name: Set SELinux to Permissive mode.
+      ansible.posix.selinux:
+        state: permissive
+        policy: targeted
+
+    - name: Execute selenium
+      ansible.builtin.command:
+        cmd: "{{ results.ansible_facts.ansible_python.executable }} screenshot.py"
+      args:
+        chdir: files
+      changed_when: false
+      delegate_to: localhost
+
     - name: Check whether PHP installed
       ansible.builtin.command: php -v
       register: php_installed
@@ -14,12 +66,6 @@
         sudo -u apache /usr/local/bin/wp cli version
       register: wpcli_installed
       changed_when: false
-
-    - name: Check if WordPress is running
-      ansible.builtin.uri:
-        url: http://localhost/wordpress
-        return_content: yes
-      register: wordpress_installed
 
     - name: Check OS version
       ansible.builtin.command: cat /etc/redhat-release
@@ -33,10 +79,6 @@
     - name: Make sure WP-CLI is installed
       ansible.builtin.debug:
         var: wpcli_installed
-
-    - name: Show contents
-      ansible.builtin.debug:
-        msg: "{{ wordpress_installed.content.split('\n') }}"
 
     - name: Show OS version
       ansible.builtin.debug:

@@ -14,8 +14,10 @@ jobs:
       - checkout
       - ansible-lint/execute:
           molecule-role-test: true
-  molecule-ec2:
-    executor: molecule-ec2/default
+  molecule:
+    machine:
+      image: ubuntu-2204:2023.10.1
+    resource_class: medium
     parameters:
       ansible-user:
         type: string
@@ -42,6 +44,10 @@ jobs:
           role-arn: ${AWS_ROLE_ARN}
           role-session-name: << parameters.aws-resource-name >>
           session-duration: '2100'
+      - run:
+          name: Install Molecule and dependencies
+          command: |
+            pip3 install -r molecule/requirements.txt
       - molecule-ec2/execute:
           ansible-user: << parameters.ansible-user >>
           aws-ami-name: << parameters.aws-ami-name >>
@@ -51,6 +57,9 @@ jobs:
           aws-vpc-subnet-id: << parameters.aws-vpc-subnet-id >>
           circleci-timeout: << parameters.circleci-timeout >>
           molecule-scenario-name: << parameters.molecule-scenario-name >>
+      - store_artifacts:
+          path: molecule/<< parameters.molecule-scenario-name >>/files/screenshot.png
+          destination: screenshot.<< parameters.molecule-scenario-name >>.png
   trailing-whitespace:
     docker:
       - image: ghcr.io/docker-images-mamono210/circleci-executors/trailing-whitespace:latest
@@ -77,7 +86,7 @@ workflows:
       - ansible-lint:
           requires:
             - yamllint
-      - molecule-ec2:
+      - molecule:
           ansible-user: 'ec2-user'
           aws-ami-name: 'centos-stream9-1*'
           aws-ami-owner-id: '808683561341'
