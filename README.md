@@ -3,7 +3,7 @@
 Role Description
 =========
 
-Installs [WordPress](https://wordpress.org) for CentOS7/Stream8.
+Installs [WordPress](https://wordpress.org) for CentOS Stream 9.
 
 Requirements
 ------------
