@@ -1,30 +1,59 @@
 import os
+import time
+import requests
 from selenium import webdriver
+from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
-# Reading the public IP address from /tmp/ip_address.txt
-with open('/tmp/ip_address.txt', 'r') as file:
-    public_ip = file.read().strip()
+def wait_for_httpd(url, timeout=120, interval=3):
+    start = time.time()
+    while True:
+        try:
+            r = requests.get(url, timeout=5, allow_redirects=False)
+            if r.status_code in (200, 301, 302, 401, 403):
+                print(f"HTTP is up. status={r.status_code}")
+                return
+            else:
+                print(f"HTTP responded but not ready. status={r.status_code}")
+        except requests.RequestException as e:
+            print(f"HTTP not up yet: {e}")
 
-# Constructing the URL for WordPress
+        if time.time() - start > timeout:
+            raise Exception("HTTPサーバーの起動を待機中にタイムアウトしました。")
+        time.sleep(interval)
+
+with open("/tmp/ip_address.txt", "r") as f:
+    public_ip = f.read().strip()
+
 target_url = f"http://{public_ip}/wordpress"
+wait_for_httpd(target_url)
 
-# Setting up headless Firefox options
 options = Options()
+options.add_argument("-headless")
+options.set_preference("dom.ipc.processCount", 1)
+options.set_preference("browser.tabs.remote.autostart", False)
 
 driver = webdriver.Remote(
-    command_executor='http://localhost:4444/wd/hub',
+    command_executor=os.environ.get("SELENIUM_REMOTE_URL", "http://selenium:4444/wd/hub"),
     options=options
 )
 
+# smallで詰まりやすいのでタイムアウトを明示
+driver.set_page_load_timeout(60)
+driver.set_script_timeout(30)
+
 driver.get(target_url)
 
-w = driver.execute_script("return document.body.scrollWidth;")
-h = driver.execute_script("return document.body.scrollHeight;")
-driver.set_window_rect(width=w, height=h)
+wait = WebDriverWait(driver, 60)
+# visibility は描画待ちが入って重いことがあるので presence に落とす
+wait.until(EC.presence_of_element_located((By.TAG_NAME, "body")))
 
-filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), "./screenshot.png")
+# ★フルページ相当の巨大ウィンドウはやめる（安定性優先）
+driver.set_window_rect(width=1365, height=768)
 
+filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), "screenshot.png")
 driver.save_screenshot(filename)
 
 driver.quit()

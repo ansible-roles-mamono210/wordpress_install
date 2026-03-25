@@ -6,9 +6,9 @@ galaxy_info:
   description: WordPress installation for Linux.
   galaxy_tags: []
   license: "license (BSD, MIT)"
-  min_ansible_version: 10.0.1
-  role_name: wordpress_install
+  min_ansible_version: 13.4.0
   platforms:
     - name: EL
       release:
         - 9
+  role_name: wordpress_install

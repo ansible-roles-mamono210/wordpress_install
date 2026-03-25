@@ -22,7 +22,7 @@
       ansible.builtin.copy:
         content: "{{ public_ip }}"
         dest: /tmp/ip_address.txt
-        mode: preserve
+        mode: '0755'
       delegate_to: localhost
 
     - name: Set WordPress URL
@@ -53,8 +53,9 @@
         cmd: "{{ results.ansible_facts.ansible_python.executable }} screenshot.py"
       args:
         chdir: files
-      changed_when: false
       delegate_to: localhost
+      become: false
+      changed_when: false
 
     - name: Check whether PHP installed
       ansible.builtin.command: php -v
