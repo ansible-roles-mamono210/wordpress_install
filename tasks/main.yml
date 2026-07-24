@@ -1,5 +1,5 @@
 ---
-- name: Create WordPress install directory
+- name: Create WordPress directory
   ansible.builtin.file:
     dest: '{{ wp_install_path }}'
     state: directory
@@ -8,14 +8,33 @@
     mode: 0755
     recurse: yes
 
+- name: Create WP-CLI directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: apache
+    group: apache
+    mode: "0755"
+  loop:
+    - /var/lib/wp-cli
+    - /var/lib/wp-cli/.wp-cli
+    - /var/lib/wp-cli/.wp-cli/cache
+
 - name: Retrieve WordPress and unarchive
+  become: true
+  become_user: apache
+  environment:
+    HOME: /var/lib/wp-cli
   ansible.builtin.command:
-    cmd:
-      "sudo -u apache /usr/local/bin/wp core download
-       --path={{ wp_install_path }}"
-  register: wp_download
-  changed_when: wp_download.stdout | length > 0
-  ignore_errors: true
+    argv:
+      - /usr/bin/php
+      - -d
+      - memory_limit=512M
+      - /usr/local/bin/wp
+      - core
+      - download
+      - "--path={{ wp_install_path }}"
+    creates: "{{ wp_install_path }}/wp-settings.php"
 
 - name: Create and configure 'wp-config.php'
   ansible.builtin.command:
