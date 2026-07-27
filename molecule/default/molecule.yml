@@ -56,19 +56,18 @@ provisioner:
     mariadb_root_password: password
     php_packages:
       - php
+      - php-cli
+      - php-common
+      - php-fpm
       - php-gd
       - php-gmp
       - php-intl
       - php-ldap
       - php-mbstring
-      - php-mcrypt
       - php-mysqlnd
       - php-opcache
       - php-pdo
       - php-pear
-      - php-pear-Net-Curl
-      - php-pecl-apcu-bc
-      - php-pecl-redis
       - php-pecl-zip
       - php-soap
       - php-xml
