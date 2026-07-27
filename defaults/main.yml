@@ -2,6 +2,9 @@
 # Working directory
 wp_install_work_dir: /tmp/wp-install
 
+# PHP repository
+php_repo: php:8.3
+
 # PHP Packages
 php_packages:
   - php

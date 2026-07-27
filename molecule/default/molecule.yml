@@ -60,13 +60,19 @@ provisioner:
       - php-gmp
       - php-intl
       - php-ldap
+      - php-mbstring
       - php-mcrypt
       - php-mysqlnd
+      - php-opcache
+      - php-pdo
       - php-pear
+      - php-pear-Net-Curl
+      - php-pecl-apcu-bc
       - php-pecl-redis
       - php-pecl-zip
       - php-soap
-    remi_repo: php:remi-8.1
+      - php-xml
+    php_repo: php:8.3
     wp_admin_email: mail@example.com
     wp_admin_password: test
     wp_admin_user: test
