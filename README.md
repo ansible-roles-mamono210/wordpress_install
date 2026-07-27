@@ -10,8 +10,6 @@ Requirements
 
 Before running this role, the following packages must be installed on the target system.
 
-* Extra Packages for Enterprise Linux ([EPEL](https://docs.fedoraproject.org/en-US/epel/))
-* [Remi's RPM repository](https://rpms.remirepo.net)
 * [PHP](https://www.php.net)
 * [Apache HTTP Server](https://httpd.apache.org)
 * [WP-CLI](https://wp-cli.org)
